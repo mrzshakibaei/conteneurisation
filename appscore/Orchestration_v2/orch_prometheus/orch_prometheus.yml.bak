@@ -1,0 +1,73 @@
+#Deployement
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prometheus
+  labels:
+    app: prometheus
+spec:
+  replicas: 1
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: prometheus
+  template:
+    metadata:
+      labels:
+        app: prometheus
+    spec:
+      containers:
+      - name: prometheus
+        image: prom/prometheus
+        args:
+          - '--storage.tsdb.retention=6h'
+          - '--storage.tsdb.path=/prometheus'
+          - '--config.file=/etc/prometheus/prometheus.yml'
+        ports:
+        - name: prometheus
+          containerPort: 9090
+        volumeMounts:
+        - name: prometheus-config-volume
+          mountPath: /etc/prometheus
+        - name: prometheus-storage-volume
+          mountPath: /prometheus
+      restartPolicy: Always
+        resources:
+            requests:
+              cpu: 500m
+              memory: 500M
+            limits:
+              cpu: 1
+           memory: 1Gi
+
+      volumes:
+      - name: prometheus-config-volume
+        configMap:
+            defaultMode: 420
+            name: prometheus-config
+      - name: prometheus-storage-volume
+        persistentVolumeClaim:
+            claimName: pvc-nfs-data
+#service
+apiVersion:v1
+kind: Service
+metadata:
+    name: prometheus-service
+    annotations:
+        prometheus.io/scrape: 'true'
+        prometheus.io/port:   '9090'
+
+spec:
+    selector:
+        app: prometheus
+    type: NodePort
+    ports:
+    - port: 8080
+      targetPort:  9090 
+      nodePort: 30000
+
+#sources for help : https://phoenixnap.com/kb/prometheus-kubernetes-monitoring

@@ -1,0 +1,43 @@
+#configuration : user data
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-data-deployment
+  labels:
+    app: user-data
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: user-data-pod
+  template:
+    metadata:
+      labels:
+        app: user-data-pod
+    spec:
+      containers:
+      - name: user-data-cont
+        image: redis
+        ports:
+        - containerPort: 9095
+        resources:
+          requests:
+            memory: "100Mi"
+            cpu: "4m"
+          limits:
+            memory: "1000Mi"
+            cpu: "1"
+
+#service user-data
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-user-data
+spec:
+  selector:
+    app: user-data-pod
+  ports:
+    - protocol: TCP
+      port: 9095
+      targetPort: 9095
+  type: ClusterIP

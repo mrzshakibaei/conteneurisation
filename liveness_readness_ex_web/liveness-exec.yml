@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    test: liveness
+  name: liveness-exec
+spec:
+  containers:
+    #conteneur concernant web
+    - name: web-cont
+    image: bart120/yv-web:1
+    args:
+    - /server
+    livenessProbe:
+      httpGet:
+        path: /home/Aboute
+        port: 8080
+      initialDelaySeconds: 3
+      periodSeconds: 3
+    readinessProbe:
+      tcpSocket:
+        port: 8080
+      initialDelaySeconds: 5
+      periodSeconds: 10
+    - name: api-identity-cont
+    image:  bart120/yv-api-identity:1
+    args:
+    - /bin/sh
+    - -c
+    - touch /tmp/healthy; sleep 30; rm -rf /tmp/healthy; sleep 600
+    
+#puis on exec kubectl apply -f liveness-exec.yaml

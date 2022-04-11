@@ -1,0 +1,37 @@
+#configuration : database
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: database-deployment
+  labels:
+    app: database
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: database-pod
+  template:
+    metadata:
+      labels:
+        app: database-pod
+    spec:
+      containers:
+      - name: database-cont
+        image: bart120/yv-database:1
+        ports:
+        - containerPort: 9098
+      
+#service database
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-database
+spec:
+  selector:
+    app: database-pod
+  ports:
+    - protocol: TCP
+      port: 9098
+      targetPort: 9098
+  type: ClusterIP
+

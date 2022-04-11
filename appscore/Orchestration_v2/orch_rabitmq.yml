@@ -1,0 +1,44 @@
+#configuration : rabitmq
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rabitmq-deployment
+  labels:
+    app: rabitmq
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rabitmq-pod
+  template:
+    metadata:
+      labels:
+        app: rabitmq-pod
+    spec:
+      containers:
+      - name: rabitmq-cont
+        image: rabbitmq:3-management
+        ports:
+        - name: port9796
+          containerPort: 9796
+        - name: port9192
+          containerPort: 9192
+
+#service rabitmq
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-rabittmq
+spec:
+  selector:
+    app: rabitmq-pod
+  ports:
+    - name: port9796
+      protocol: TCP
+      port: 9796
+      targetPort: 9796
+    - name: port9192
+      protocol: TCP
+      port: 9192
+      targetPort: 9192
+  type: ClusterIP
