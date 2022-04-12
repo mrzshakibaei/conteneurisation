@@ -1,0 +1,17 @@
+Voici les auteurs et leurs contributions :
+
+aurélien CHATILLON :
+Déploiement 
+Partie Sécurité
+
+mohammad-reza SHAKIBAEI :
+Déploiement
+Partie deploiement automatisé
+Partie Bilan de santé
+
+
+arthur Kozior :
+Déploiement
+Partie Logs (ELK)
+
+Le déploiement c'est fait en commun, nous avons diviser les parties entre les membres.
